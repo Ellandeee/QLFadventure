@@ -35,8 +35,19 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // === BOUTON ACCUEIL VERS MODS ===
+    const btnGoMods = document.getElementById('btn-go-mods');
+    if (btnGoMods) {
+        btnGoMods.addEventListener('click', (e) => {
+            e.preventDefault(); // Empêche le saut de page brutal
+            window.history.pushState(null, null, '#mods'); // Met l'URL à jour
+            navigateTo('#mods'); // Lance la fonction d'affichage de section
+        });
+    }
+
     navigateTo(window.location.hash);
 
+    
     // === ACCORDION ===
     const headers = document.querySelectorAll('.accordion-header');
     
@@ -46,6 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const content = header.nextElementSibling;
             // On ajoute 40px de sécurité pour les ombres et les arrondis
             content.style.maxHeight = (content.scrollHeight + 40) + "px";
+            
+            // CORRECTION BUG TOOLTIP : 
+            // On attend la fin de l'animation CSS (300ms) pour autoriser le tooltip à déborder
+            setTimeout(() => {
+                if (header.classList.contains('active')) {
+                    content.style.overflow = "visible";
+                    header.parentElement.style.overflow = "visible";
+                }
+            }, 300);
         }
     }
 
@@ -60,6 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateAccordionHeight(header);
             } else {
                 header.classList.remove('active');
+                // CORRECTION BUG TOOLTIP : 
+                // On remet l'overflow caché immédiatement pour que l'animation de fermeture soit propre
+                content.style.overflow = "hidden";
+                header.parentElement.style.overflow = "hidden";
                 content.style.maxHeight = null;
             }
         });
@@ -84,14 +108,23 @@ document.addEventListener("DOMContentLoaded", () => {
         btnCollapse.addEventListener('click', () => {
             headers.forEach(header => {
                 header.classList.remove('active');
-                header.nextElementSibling.style.maxHeight = null;
+                const content = header.nextElementSibling;
+                // CORRECTION BUG TOOLTIP
+                content.style.overflow = "hidden";
+                header.parentElement.style.overflow = "hidden";
+                content.style.maxHeight = null;
             });
         });
     }
 
     // Sécurité : Recalculer les hauteurs si l'utilisateur redimensionne la fenêtre
     window.addEventListener('resize', () => {
-        headers.forEach(header => updateAccordionHeight(header));
+        headers.forEach(header => {
+            if (header.classList.contains('active')) {
+                const content = header.nextElementSibling;
+                content.style.maxHeight = (content.scrollHeight + 40) + "px";
+            }
+        });
     });
 
     // === SEARCH FILTER ===
@@ -106,8 +139,12 @@ document.addEventListener("DOMContentLoaded", () => {
             if (query.length > 0) {
                 headers.forEach(header => {
                     header.classList.add('active');
-                    // On met une hauteur immense temporaire pour ne rien couper
-                    header.nextElementSibling.style.maxHeight = "10000px"; 
+                    const content = header.nextElementSibling;
+                    content.style.maxHeight = "10000px"; 
+                    
+                    // CORRECTION BUG TOOLTIP
+                    content.style.overflow = "visible";
+                    header.parentElement.style.overflow = "visible";
                 });
             }
 

@@ -233,6 +233,10 @@ h1, h2, h3 {
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
     background-color: var(--bg-main);
+    
+    /* Ajouts pour garder les coins arrondis propres quand l'overflow devient visible */
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 /* === MOD LISTS INSIDE ACCORDION === */
@@ -278,8 +282,10 @@ h1, h2, h3 {
 }
 
 .mod-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 999; /* Permet au tooltip de s'afficher au premier plan sans être recouvert */
 }
 
 /* <-- BLOC À AJOUTER : Colore le texte quand on survole la boîte */
@@ -379,4 +385,190 @@ h1, h2, h3 {
     background-color: rgba(0,0,0,0.2);
     padding: 2px 8px;
     border-radius: 6px;
+}
+
+/* === MOD ITEMS & ICONES === */
+.mod-grid {
+    display: grid;
+    /* On agrandit un peu la taille minimale des colonnes */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+    gap: 15px;
+}
+
+.mod-item {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    padding: 14px 18px; /* Plus d'espace intérieur */
+    border-radius: 8px; /* Angles plus doux */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    cursor: pointer;
+}
+
+.mod-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.mod-name {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+    font-size: 1.05rem; /* Texte plus grand */
+    color: var(--text-main);
+    word-break: break-word;
+}
+
+.mod-icon-container {
+    width: 40px; /* Icône plus grande */
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.mod-icon {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    background-color: var(--bg-surface);
+}
+
+.mod-icon-placeholder {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    border-radius: 8px;
+    background-color: var(--border);
+    color: var(--text-muted);
+    font-size: 20px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+}
+
+.mod-item:hover .mod-link { color: var(--accent); }
+
+.mod-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.mod-link::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+/* === INFOBULLES (TOOLTIPS) === */
+.mod-item .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 110%; /* Place l'infobulle juste au-dessus du bouton */
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    width: max-content;
+    max-width: 280px;
+    background-color: #000000;
+    color: #fff;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+    pointer-events: none; /* Empeche le tooltip d'interférer avec la souris */
+}
+
+/* Petit triangle pointant vers le bas */
+.mod-item .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--accent) transparent transparent transparent;
+}
+
+/* Apparition de l'infobulle au survol */
+.mod-item:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* === BOUTON PRINCIPAL === */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--accent);
+    color: var(--bg-main);
+    padding: 16px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: bold;
+    font-family: var(--font-heading);
+    margin-top: 25px;
+    transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2); /* Ombre dorée discrète */
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4); /* Ombre dorée plus forte au survol */
+}
+
+/* === LOGO ACCUEIL === */
+.accueil-banner {
+    display: flex;
+    align-items: center;
+    gap: 35px; /* Espace entre le logo et le texte */
+}
+
+.logo-accueil {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 16px; /* Coins arrondis doux */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Ombre portée profonde */
+    border: 2px solid var(--border); /* Rappel subtil de la couleur de tes bordures */
+    flex-shrink: 0; /* Empêche le logo de s'écraser si le texte est long */
+}
+
+/* Version Mobile : on empile le logo et le texte */
+@media (max-width: 768px) {
+    .accueil-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .logo-accueil {
+        width: 120px; /* Un peu plus petit sur mobile */
+        height: 120px;
+    }
 }
